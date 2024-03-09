@@ -9,6 +9,18 @@ from views import (
     get_single_employee,
     get_all_customers,
     get_single_customer,
+    create_animal,
+    create_location,
+    create_customer,
+    create_employee,
+    delete_animal,
+    delete_employee,
+    delete_location,
+    delete_customer,
+    update_employee,
+    update_customer,
+    update_animal,
+    update_location,
 )
 
 
@@ -70,16 +82,94 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Set response code to 'Created'
         self._set_headers(201)
-
         content_len = int(self.headers.get("content-length", 0))
         post_body = self.rfile.read(content_len)
-        response = {"payload": post_body}
-        self.wfile.write(json.dumps(response).encode())
+        # response = {"payload": post_body}
+        # Convert JSON string into Python dictionary
+        post_body = json.loads(post_body)
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
 
-    # A method that handles any PUT request.
+        # Initialize new animal
+        new_animal = None
+        if resource == "animals":
+            new_animal = create_animal(post_body)
+        # Encode the new animal and send in response
+        self.wfile.write(json.dumps(new_animal).encode())
+
+        # New Location
+        new_location = None
+        if resource == "locations":
+            new_location = create_location(post_body)
+        self.wfile.write(json.dumps(new_location).encode())
+
+        # New Employee
+        new_employee = None
+        if resource == "employees":
+            new_employee = create_employee(post_body)
+        self.wfile.write(json.dumps(new_employee).encode())
+
+        # New Customer
+        new_customer = None
+        if resource == "customers":
+            new_customer = create_customer(post_body)
+        self.wfile.write(json.dumps(new_customer).encode())
+
+    def do_DELETE(self):
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            delete_animal(id)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
+
+        if resource == "employees":
+            delete_employee(id)
+
+        self.wfile.write("".encode())
+
+        if resource == "locations":
+            delete_location(id)
+        self.wfile.write("".encode())
+
+        if resource == "customers":
+            delete_customer(id)
+        self.wfile.write("".encode())
+
+    # A method that handles a PUT request.
     def do_PUT(self):
-        """Handles PUT requests to the server"""
-        self.do_PUT()
+        self._set_headers(204)
+        content_len = int(self.headers.get("content-length", 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "animals":
+            update_animal(id, post_body)
+
+        self.wfile.write("".encode())
+
+        if resource == "employees":
+            update_employee(id, post_body)
+
+        self.wfile.write("".encode())
+
+        if resource == "locations":
+            update_location(id, post_body)
+
+        self.wfile.write("".encode())
+
+        if resource == "customers":
+            update_customer(id, post_body)
+
+        self.wfile.write("".encode())
 
     def _set_headers(self, status):
         # Notice this Docstring also includes information about the arguments passed to the function

@@ -1,0 +1,117 @@
+[
+    {
+        "stmt": "CREATE TABLE `Location` (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`address`\tTEXT NOT NULL\n);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "CREATE TABLE `Customer` (\n    `id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n    `name`    TEXT NOT NULL,\n    `address`    TEXT NOT NULL,\n    `email`    TEXT NOT NULL,\n    `password`    TEXT NOT NULL\n);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "CREATE TABLE `Animal` (\n\t`id`  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`  TEXT NOT NULL,\n\t`status` TEXT NOT NULL,\n\t`breed` TEXT NOT NULL,\n\t`customer_id` INTEGER NOT NULL,\n\t`location_id` INTEGER,\n\tFOREIGN KEY(`customer_id`) REFERENCES `Customer`(`id`),\n\tFOREIGN KEY(`location_id`) REFERENCES `Location`(`id`)\n);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "CREATE TABLE `Employee` (\n\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n\t`name`\tTEXT NOT NULL,\n\t`address`\tTEXT NOT NULL,\n\t`location_id` INTEGER NOT NULL,\n\tFOREIGN KEY(`location_id`) REFERENCES `Location`(`id`)\n\n);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Location` VALUES (null, 'Nashville North', \"64 Washington Heights\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Location` VALUES (null, 'Nashville South', \"101 Penn Ave\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Employee` VALUES (null, \"Madi Peper\", \"35498 Madison Ave\", 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Employee` VALUES (null, \"Kristen Norris\", \"100 Main St\", 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Employee` VALUES (null, \"Meg Ducharme\", \"404 Unknown Ct\", 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Employee` VALUES (null, \"Hannah Hall\", \"204 Empty Ave\", 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Employee` VALUES (null, \"Leah Hoefling\", \"200 Success Way\", 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Customer` VALUES (null, \"Mo Silvera\", \"201 Created St\", \"mo@silvera.com\", \"password\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Customer` VALUES (null, \"Bryan Nilsen\", \"500 Internal Error Blvd\", \"bryan@nilsen.com\", \"password\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Customer` VALUES (null, \"Jenna Solis\", \"301 Redirect Ave\", \"jenna@solis.com\", \"password\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Customer` VALUES (null, \"Emily Lemmon\", \"454 Mulberry Way\", \"emily@lemmon.com\", \"password\");",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Snickers\", \"Recreation\", \"Dalmation\", 4, 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Jax\", \"Treatment\", \"Beagle\", 1, 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Falafel\", \"Treatment\", \"Siamese\", 4, 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Doodles\", \"Kennel\", \"Poodle\", 3, 1);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Daps\", \"Kennel\", \"Boxer\", 2, 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Cleo\", \"Kennel\", \"Poodle\", 2, 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Popcorn\", \"Kennel\", \"Beagle\", 3, 2);",
+        "header": [],
+        "rows": []
+    },
+    {
+        "stmt": "INSERT INTO `Animal` VALUES (null, \"Curly\", \"Treatment\", \"Poodle\", 4, 2);",
+        "header": [],
+        "rows": []
+    }
+]
