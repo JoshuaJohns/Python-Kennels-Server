@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlparse, parse_qs
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from views import (
     get_all_animals,
@@ -195,7 +196,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         )
         self.end_headers()
 
-    def parse_url(self, path):
+        # def parse_url(self, path):
         # Just like splitting a string in JavaScript. If the
         # path is "/animals/1", the resulting list will
         # have "" at index 0, "animals" at index 1, and "1"
@@ -215,6 +216,22 @@ class HandleRequests(BaseHTTPRequestHandler):
             pass  # Request had trailing slash: /animals/
 
         return (resource, id)  # This is a tuple
+
+    def parse_url(self, path):
+        parsed_url = urlparse(path)
+        path_params = parsed_url.path.split("/")  # ['', 'animals', 1]
+        resource = path_params[1]
+
+        if parsed_url.query:
+            query = parse_qs(parsed_url.query)
+            return (resource, query)
+
+        pk = None
+        try:
+            pk = int(path_params[2])
+        except (IndexError, ValueError):
+            pass
+        return (resource, pk)
 
 
 # This function is not inside the class. It is the starting
