@@ -101,3 +101,31 @@ def update_employee(id, new_employee):
     for index, employee in enumerate(EMPLOYEES):
         if employee["id"] == id:
             EMPLOYEES[index] = new_employee
+
+
+def get_employees_by_location(locationId):
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+            """
+        select
+           e.id,
+           e.name,
+           e.location_id
+        FROM employee e
+        WHERE e.location_id = ?
+""",
+            (locationId,),
+        )
+        employees = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employee(
+                row["id"],
+                row["name"],
+                row["location_id"],
+            )
+            employees.append(employee.__dict__)
+    return employees

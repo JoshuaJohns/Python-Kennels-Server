@@ -22,6 +22,10 @@ from views import (
     update_customer,
     update_animal,
     update_location,
+    get_customers_by_email,
+    get_animals_by_location,
+    get_animals_by_status,
+    get_employees_by_location,
 )
 
 
@@ -42,38 +46,47 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
         response = {}  # Default response
 
+        parsed = self.parse_url(self.path)
+
+        if "?" not in self.path:
+            (resource, id) = parsed
+            if resource == "animals":
+                if id is not None:
+                    response = get_single_animal(id)
+                else:
+                    response = get_all_animals()
+            elif resource == "customers":
+                if id is not None:
+                    response = get_single_customer(id)
+                else:
+                    response = get_all_customers()
+            elif resource == "locations":
+                if id is not None:
+                    response = get_single_location(id)
+                else:
+                    response = get_all_locations()
+            elif resource == "employees":
+                if id is not None:
+                    response = get_single_employee(id)
+                else:
+                    response = get_all_employees()
+        else:  # There is a ? in the path, run the query param functions
+            (resource, query) = parsed
+
+            # see if the query dictionary has an email key
+            if query.get("email") and resource == "customers":
+                response = get_customers_by_email(query["email"][0])
+
+            if query.get("location_id") and resource == "animals":
+                response = get_animals_by_location(query["location_id"][0])
+            if query.get("status") and resource == "animals":
+                response = get_animals_by_status(query["status"][0])
+
+            if query.get("location_id") and resource == "employees":
+                response = get_employees_by_location(query["location_id"][0])
         # Parse the URL and capture the tuple that is returned
-        (resource, id) = self.parse_url(self.path)
 
-        if resource == "animals":
-            if id is not None:
-                response = get_single_animal(id)
-
-            else:
-                response = get_all_animals()
-
-        if resource == "locations":
-            if id is not None:
-                response = get_single_location(id)
-
-            else:
-                response = get_all_locations()
-
-        if resource == "employees":
-            if id is not None:
-                response = get_single_employee(id)
-
-            else:
-                response = get_all_employees()
-
-        if resource == "customers":
-            if id is not None:
-                response = get_single_customer(id)
-
-            else:
-                response = get_all_customers()
-
-            # Send a JSON formatted string as a response
+        # Send a JSON formatted string as a response
         self.wfile.write(json.dumps(response).encode())
 
     # Here's a method on the class that overrides the parent's method.
