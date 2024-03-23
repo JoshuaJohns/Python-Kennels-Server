@@ -59,3 +59,17 @@ INSERT INTO `Animal` VALUES (null, "Daps", "Kennel", "Boxer", 2, 2);
 INSERT INTO `Animal` VALUES (null, "Cleo", "Kennel", "Poodle", 2, 2);
 INSERT INTO `Animal` VALUES (null, "Popcorn", "Kennel", "Beagle", 3, 2);
 INSERT INTO `Animal` VALUES (null, "Curly", "Treatment", "Poodle", 4, 2);
+
+
+
+SELECT
+            l.id,
+            l.name,
+            l.address,
+            e.id,
+            e.name employee_name,
+            e.address employee_address,
+            e.location_id
+        FROM Location l
+        Join Employee e
+            ON e.location_id = l.id

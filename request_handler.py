@@ -49,12 +49,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         parsed = self.parse_url(self.path)
 
         if "?" not in self.path:
-            (resource, id) = parsed
+            (resource, id, query_params) = parsed
             if resource == "animals":
                 if id is not None:
                     response = get_single_animal(id)
                 else:
-                    response = get_all_animals()
+                    response = get_all_animals(query_params)
             elif resource == "customers":
                 if id is not None:
                     response = get_single_customer(id)
@@ -71,19 +71,19 @@ class HandleRequests(BaseHTTPRequestHandler):
                 else:
                     response = get_all_employees()
         else:  # There is a ? in the path, run the query param functions
-            (resource, query) = parsed
+            (resource, id, query) = parsed
 
             # see if the query dictionary has an email key
-            if query.get("email") and resource == "customers":
-                response = get_customers_by_email(query["email"][0])
+            # if query.get("email") and resource == "customers":
+            #    response = get_customers_by_email(query["email"][0])
 
-            if query.get("location_id") and resource == "animals":
-                response = get_animals_by_location(query["location_id"][0])
-            if query.get("status") and resource == "animals":
-                response = get_animals_by_status(query["status"][0])
+            if resource == "animals":
+                response = get_all_animals(query)
+        # if query.get("status") and resource == "animals":
+        #   response = get_animals_by_status(query["status"][0])
 
-            if query.get("location_id") and resource == "employees":
-                response = get_employees_by_location(query["location_id"][0])
+        # if query.get("location_id") and resource == "employees":
+        #     response = get_employees_by_location(query["location_id"][0])
         # Parse the URL and capture the tuple that is returned
 
         # Send a JSON formatted string as a response
@@ -102,7 +102,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Convert JSON string into Python dictionary
         post_body = json.loads(post_body)
         # Parse the URL
-        (resource, id) = self.parse_url(self.path)
+        (resource, id, query_params) = self.parse_url(self.path)
 
         # Initialize new animal
         new_animal = None
@@ -165,8 +165,14 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         (resource, id) = self.parse_url(self.path)
 
+        success = False
+
         if resource == "animals":
-            update_animal(id, post_body)
+            success = update_animal(id, post_body)
+        if success:
+            self._set_headers(204)
+        else:
+            self._set_headers(404)
 
         self.wfile.write("".encode())
 
@@ -214,23 +220,23 @@ class HandleRequests(BaseHTTPRequestHandler):
         # path is "/animals/1", the resulting list will
         # have "" at index 0, "animals" at index 1, and "1"
         # at index 2.
-        path_params = path.split("/")
-        resource = path_params[1]
-        id = None
+        # path_params = path.split("/")
+        # resource = path_params[1]
+        # id = None
 
         # Try to get the item at index 2
-        try:
-            # Convert the string "1" to the integer 1
-            # This is the new parseInt()
-            id = int(path_params[2])
-        except IndexError:
-            pass  # No route parameter exists: /animals
-        except ValueError:
-            pass  # Request had trailing slash: /animals/
+        # try:
+        # Convert the string "1" to the integer 1
+        # This is the new parseInt()
+        #    id = int(path_params[2])
+        # except IndexError:
+        #   pass  # No route parameter exists: /animals
+        # except ValueError:
+        #    pass  # Request had trailing slash: /animals/
 
-        return (resource, id)  # This is a tuple
+        # return (resource, id)  # This is a tuple
 
-    def parse_url(self, path):
+        # def parse_url(self, path):
         parsed_url = urlparse(path)
         path_params = parsed_url.path.split("/")  # ['', 'animals', 1]
         resource = path_params[1]
@@ -245,6 +251,26 @@ class HandleRequests(BaseHTTPRequestHandler):
         except (IndexError, ValueError):
             pass
         return (resource, pk)
+
+    def parse_url(self, path):
+        url_components = urlparse(path)
+        path_params = url_components.path.strip("/").split("/")
+        query_params = []
+
+        if url_components.query != "":
+            query_params = url_components.query.split("&")
+
+        resource = path_params[0]
+        id = None
+
+        try:
+            id = int(path_params[1])
+        except IndexError:
+            pass  # No route parameter exists: /animals
+        except ValueError:
+            pass  # Request had trailing slash: /animals/
+
+        return (resource, id, query_params)
 
 
 # This function is not inside the class. It is the starting
