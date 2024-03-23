@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from models.employee import Employee
+from models.location import Location
 
 EMPLOYEES = EMPLOYEES = [
     {"id": 1, "name": "Jenna Solis"},
@@ -23,8 +24,15 @@ def get_all_employees():
             """
         SELECT
             e.id,
-            e.name
+            e.name,
+            e.address,
+            e.location_id,
+            l.id locationId,
+            l.name location_name,
+            l.address location_address
         FROM employee e
+        JOIN Location l
+            ON l.id = e.location_id
         """
         )
 
@@ -37,8 +45,14 @@ def get_all_employees():
         # Iterate list of data returned from database
         for row in dataset:
 
-            employee = Employee(row["id"], row["name"])
+            employee = Employee(
+                row["id"], row["name"], row["location_id"], row["address"]
+            )
 
+            location = Location(
+                row["locationId"], row["location_name"], row["location_address"]
+            )
+            employee.location = location.__dict__
             employees.append(employee.__dict__)
 
     return employees
@@ -62,8 +76,15 @@ def get_single_employee(id):
             """
         SELECT
             e.id,
-            e.name
+            e.name,
+            e.address,
+            e.location_id,
+            l.id locationId,
+            l.name location_name,
+            l.address location_address
         FROM employee e
+        JOIN Location l
+            ON l.id = e.location_id
         WHERE e.id = ?
         """,
             (id,),
@@ -73,8 +94,13 @@ def get_single_employee(id):
         data = db_cursor.fetchone()
 
         # Create an animal instance from the current row
-        employee = Employee(data["id"], data["name"])
-
+        employee = Employee(
+            data["id"], data["name"], data["location_id"], data["address"]
+        )
+        location = Location(
+            data["locationId"], data["location_name"], data["location_address"]
+        )
+        employee.location = location.__dict__
         return employee.__dict__
 
 
