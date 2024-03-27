@@ -22,13 +22,17 @@ def get_all_locations():
         # Write the SQL query to get the information you want
         db_cursor.execute(
             """
-        SELECT
+         SELECT COUNT(a.id) animals,
             l.id,
             l.name,
-            l.address
-           
+            l.address,
+            a.id,
+            a.name
         FROM Location l
-    
+        JOIN Animal a
+            ON a.location_id = l.id
+		
+        GROUP BY l.id
         """
         )
 
@@ -42,6 +46,8 @@ def get_all_locations():
         for row in dataset:
 
             location = Location(row["id"], row["name"], row["address"])
+
+            location.animals = row["animals"]
             # employee = Employee(
             #    row["id"],
             ##    row["employee_name"],

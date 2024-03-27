@@ -74,8 +74,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             (resource, id, query) = parsed
 
             # see if the query dictionary has an email key
-            # if query.get("email") and resource == "customers":
-            #    response = get_customers_by_email(query["email"][0])
+            if resource == "customers":
+                response = get_customers_by_email(query[0])
 
             if resource == "animals":
                 response = get_all_animals(query)

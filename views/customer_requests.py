@@ -115,6 +115,8 @@ def get_customers_by_email(email):
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
+        [qs_key, qs_value] = email.split("=")
+
         # Write the SQL query to get the information you want
         db_cursor.execute(
             """
@@ -127,7 +129,7 @@ def get_customers_by_email(email):
         from Customer c
         WHERE c.email = ?
         """,
-            (email,),
+            (qs_value,),
         )
 
         customers = []

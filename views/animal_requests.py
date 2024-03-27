@@ -51,14 +51,27 @@ def get_all_animals(query_params):
         db_cursor = conn.cursor()
 
         sort_by = ""
+        where_clause = ""
 
         if len(query_params) != 0:
             param = query_params[0]
-            [qs_key, qs_value] = param.split("=")
 
-            if qs_key == "_sortBy":
-                if qs_value == "location":
-                    sort_by = "ORDER BY a.location_id"
+            for index in param:
+                if index == "=":
+                    [qs_key, qs_value] = param.split("=")
+                    if qs_key == "_sortBy":
+                        if qs_value == "location":
+                            sort_by = "ORDER BY a.location_id"
+                        if qs_value == "customer":
+                            sort_by = "ORDER BY a.customer_id"
+                        if qs_value == "status":
+                            sort_by = "ORDER BY a.status"
+                if index == "/":
+                    [wc_key, wc_value] = param.split("/")
+                    if wc_key == "locationId":
+                        where_clause = f"WHERE a.location_id = {wc_value}"
+                    if wc_key == "status":
+                        where_clause = f"WHERE a.status = '{wc_value}'"
 
         sql_to_execute = f"""
         SELECT
@@ -81,6 +94,7 @@ def get_all_animals(query_params):
         LEFT JOIN Customer c
             on c.id = a.customer_id
         {sort_by}
+        {where_clause}
         """
         db_cursor.execute(sql_to_execute)
 
